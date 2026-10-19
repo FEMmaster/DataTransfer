@@ -28,6 +28,68 @@ The code uses Python and the following packages:
 
 Specific tested package versions are not documented in the repository.
 
+## Usage
+
+The repository provides a complete workflow for generating mesh-based datasets, training neural network approximators, and transferring function values between non-nested meshes. Users can reproduce the experiments using the provided datasets or generate new data by running the corresponding scripts.
+
+### 1. Data Generation
+
+Two scripts are provided for preparing mesh-based datasets:
+
+- `Train_mesh.py`: Generates multiple meshes and evaluates a prescribed function at their nodes to construct the dataset.
+- `Train_document.py`: Loads existing VTU mesh files and prepares the corresponding dataset for interpolation experiments.
+
+Both scripts can generate `mesh_data.npz`, which contains five meshes (`T1`–`T5`) and their associated nodal function values.
+
+To generate a new dataset, run:
+
+```bash
+python Train_mesh.py
+```
+
+Alternatively, to prepare data from existing VTU meshes:
+
+```bash
+python Train_document.py
+```
+
+The generated dataset is saved in `train_data/`. An example dataset is also included in the repository, allowing the interpolation experiments to be performed without regenerating the data.
+
+The prescribed functions and mesh configurations can be modified in the data-generation scripts to investigate different interpolation problems.
+
+### 2. Neural Network-Based Data Transfer
+
+The repository implements three neural network architectures for interpolation across non-nested meshes:
+
+| Script | Method |
+| --- | --- |
+| `FIT_NN.py` | Multilayer perceptron (MLP) |
+| `FIT_ELM.py` | Extreme learning machine (ELM) |
+| `FIT_RBF.py` | Radial basis function (RBF) network |
+
+Run the corresponding experiments using:
+
+```bash
+python FIT_NN.py
+python FIT_ELM.py
+python FIT_RBF.py
+```
+
+The models are fitted using the nodal function values on the source mesh `T1`. Once constructed, the approximators are evaluated on the target meshes `T2`–`T5` to perform cross-mesh interpolation.
+
+The numerical results and solution-comparison figures are saved in `test_result/`.
+
+### 3. Conventional Interpolation Comparisons
+
+Additional experiments compare RBF interpolation with conventional piecewise-linear interpolation in one and two dimensions.
+
+- `1D_RBFvsLINE_smooth.py` and `1D_RBFvsLINE_peak.py`: One-dimensional interpolation experiments.
+- `2D_RBFvsLINE_smooth.py` and `2D_RBFvsLINE_peak.py`: Two-dimensional interpolation experiments.
+
+These scripts investigate interpolation accuracy for smooth and sharply varying functions on different meshes.
+
+**Note:** Some scripts use absolute file paths from the original development environment. Update the input and output directory paths before running the experiments.
+
 ## Code Structure
 
 ### Interpolation Comparisons
